@@ -2,5 +2,8 @@
   (:use [spam.core])
   (:use [clojure.test]))
 
-(deftest replace-me ;; FIXME: write
-  (is false "No tests have been written."))
+(deftest should-return-correct-spam-probability
+  (is (= 3/8 (probability_of :spam))))
+
+(deftest should-return-correct-ham-probability
+  (is (= 5/8 (probability_of :ham))))

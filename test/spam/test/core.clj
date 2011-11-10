@@ -10,3 +10,6 @@
 
 (deftest should-calculate-correct-spam-probability-for-simple-message
   (is (= 3/9 (probability-of "secret" :spam))))
+
+(deftest probability-of-unknown-word-should-be-zero
+  (is (zero? (probability-of "foobar" :spam))))

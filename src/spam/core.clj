@@ -9,29 +9,20 @@
                   "sports is today",
                   "sports cost money"]})
 
-(defn cnt [type]
-  (cond (= :spam type)
-          (count (bag :spam))
-        (= :ham type)
-          (count (bag :ham))))
-
 (defn bag-size []
-  (+ (cnt :spam)
-     (cnt :ham)))
+  (+ (count (bag :spam))
+     (count (bag :ham))))
 
 (defn words [message]
   (re-seq #"\w+" message))
 
-(defn freq [type]
-  (map frequencies (map words (bag type))))
-
 (defn inc-freq [type]
-  (apply merge-with + (freq type)))
+  (apply merge-with + (map frequencies (map words (bag type)))))
 
 (defn probability-of 
   ([type]
-    (/ (cnt type) (bag-size)))
+    (/ (count (bag type)) (bag-size)))
   ([message type]
     (let [freqs (inc-freq type)]
-      (/ (freqs  message)
+      (/ (or (freqs message) 0)
        (apply + (vals freqs))))))

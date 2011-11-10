@@ -14,7 +14,9 @@
      (count (bag :ham))))
 
 (defn words [message]
-  (re-seq #"\w+" message))
+  (if (seq? message)
+    message
+    (re-seq #"\w+" message)))
 
 (defn inc-freq [type]
   (apply merge-with + (map frequencies (map words (bag type)))))
@@ -23,6 +25,20 @@
   ([type]
     (/ (count (bag type)) (bag-size)))
   ([message type]
-    (let [freqs (inc-freq type)]
-      (/ (or (freqs message) 0)
-       (apply + (vals freqs))))))
+    (let [coll (words message)]
+      (if (< 1 (count coll))
+        (* (probability-of (first coll) type)
+           (probability-of (rest coll) type))
+      (let [freqs (inc-freq type)]
+        (/ (or (freqs (first coll)) 0)
+           (apply + (vals freqs))))))))
+
+(defn probability-spam [message]
+  (let [p-spam (probability-of :spam)
+        p-ham  (probability-of :ham)
+        p-message-given-spam (probability-of message :spam)
+        p-message-given-ham (probability-of message :ham)]
+  (/ (* p-message-given-spam p-spam)
+     (+ (* p-message-given-spam p-spam)
+            (* p-message-given-ham p-ham))
+         )))

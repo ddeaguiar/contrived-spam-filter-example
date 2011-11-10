@@ -19,5 +19,19 @@
   (+ (cnt :spam)
      (cnt :ham)))
 
-(defn probability_of [type]
-  (/ (cnt type) (bag-size)))
+(defn words [message]
+  (re-seq #"\w+" message))
+
+(defn freq [type]
+  (map frequencies (map words (bag type))))
+
+(defn inc-freq [type]
+  (apply merge-with + (freq type)))
+
+(defn probability-of 
+  ([type]
+    (/ (cnt type) (bag-size)))
+  ([message type]
+    (let [freqs (inc-freq type)]
+      (/ (freqs  message)
+       (apply + (vals freqs))))))
